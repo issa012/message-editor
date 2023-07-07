@@ -1,0 +1,15 @@
+.container {
+  display: flex;
+  align-items: center;
+}
+
+.left {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  width: 16ch;
+}
+
+.innerTree {
+  margin-left: 5rem;
+}
