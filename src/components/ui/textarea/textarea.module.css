@@ -1,4 +1,6 @@
 .textarea {
   box-sizing: border-box;
   width: 100%;
+  resize: none;
+  min-height: 0;
 }
