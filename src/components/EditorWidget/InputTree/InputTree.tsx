@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef } from 'react';
 import { Button } from '../../ui/button/button';
 import { Textarea } from '../../ui/textarea/textarea';
 import styles from './InputTree.module.css';
@@ -14,23 +14,23 @@ type InputTreeProps = {
 
 const InputTree = ({
   depth,
-  className,
+  className = '',
   setDepth,
   handleFocus,
   height,
   setText,
 }: InputTreeProps) => {
-  const [topText, setTopText] = useState('');
-  const [bottomText, setBottomText] = useState('');
+  const topTextarea = useRef<HTMLTextAreaElement>(null);
+  const bottomTextarea = useRef<HTMLTextAreaElement>(null);
 
   const onDelete = () => {
-    setDepth(height);
     setText();
+    setDepth(height);
   };
 
   if (depth === 0) return null;
   return (
-    <div className={className}>
+    <div className={`${className} ${styles.wrapper}`}>
       <div className={styles.container}>
         <div className={styles.left}>
           <span>IF</span>
@@ -42,11 +42,7 @@ const InputTree = ({
         <div className={styles.left}>
           <span>THEN</span>
         </div>
-        <Textarea
-          value={topText}
-          onChange={(e) => setTopText(e.target.value)}
-          onFocus={handleFocus}
-        />
+        <Textarea ref={topTextarea} onFocus={handleFocus} />
       </div>
       <InputTree
         handleFocus={handleFocus}
@@ -55,18 +51,18 @@ const InputTree = ({
         depth={depth - 1}
         setDepth={setDepth}
         setText={() => {
-          setTopText(topText.concat(bottomText));
-          setBottomText('');
+          if (topTextarea.current && bottomTextarea.current) {
+            topTextarea.current.value = topTextarea.current.value.concat(
+              bottomTextarea.current.value
+            );
+            bottomTextarea.current.value = '';
+          }
         }}
       ></InputTree>
       {depth - 1 > 0 ? (
         <div className={styles.container}>
           <div className={styles.left}></div>
-          <Textarea
-            value={bottomText}
-            onChange={(e) => setBottomText(e.target.value)}
-            onFocus={handleFocus}
-          />
+          <Textarea ref={bottomTextarea} onFocus={handleFocus} />
         </div>
       ) : null}
       <div className={styles.container}>
