@@ -1,10 +1,18 @@
 import * as React from 'react';
+
+import TextareaAutosize, { TextareaAutosizeProps } from 'react-textarea-autosize';
 import styles from './textarea.module.css';
 
-export interface TextareaProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {}
-const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
-  ({ className = '', ...props }, ref) => {
-    return <textarea className={`${styles.textarea} ${className}`} ref={ref} {...props} />;
+const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaAutosizeProps>(
+  ({ className, ...props }, ref) => {
+    return (
+      <TextareaAutosize
+        className={`${styles.textarea} ${className}`}
+        ref={ref}
+        {...props}
+        minRows={2}
+      />
+    );
   }
 );
 Textarea.displayName = 'Textarea';
