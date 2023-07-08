@@ -64,7 +64,7 @@ const EditorWidget = ({
       </div>
 
       <div ref={treeRef} className={styles.tree}>
-        <Textarea onFocus={handleFocus} ref={topTextarea} />
+        <Textarea autoFocus onFocus={handleFocus} ref={topTextarea} />
         <InputTree
           handleFocus={handleFocus}
           depth={depth}
