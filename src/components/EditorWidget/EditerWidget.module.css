@@ -1,9 +1,18 @@
 .container {
   max-width: 1200px;
-  padding: 1rem;
+  padding: 0 1rem;
+  margin: 0 auto;
 }
 
 .title {
   font-size: 2rem;
   text-align: center;
+  margin: 8px 0;
+}
+
+.controls {
+  text-align: center;
+}
+.controls button {
+  margin: 1rem 2rem;
 }

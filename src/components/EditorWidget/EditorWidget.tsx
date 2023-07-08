@@ -1,19 +1,10 @@
+import { useRef, useState } from 'react';
+
 import { Button } from '../ui/button/button';
 import { Textarea } from '../ui/textarea/textarea';
 import styles from './EditerWidget.module.css';
-
-import { useRef, useState } from 'react';
 import InputTree from './InputTree/InputTree';
-
-const createTemplate: (node: HTMLDivElement) => string[] = (node) => {
-  console.log(node);
-  let arr: string[] = [];
-  arr.push((node.children[0] as HTMLTextAreaElement).value);
-
-  arr.push((node.children[2] as HTMLTextAreaElement).value);
-
-  return [];
-};
+import { generateMessage, generateTemplate } from '../../utils';
 
 const EditorWidget = ({
   arrVarNames,
@@ -25,13 +16,15 @@ const EditorWidget = ({
 }) => {
   const [lastElement, setLastElement] = useState<HTMLTextAreaElement | null>(null);
   const [depth, setDepth] = useState(2);
-  const [height] = useState(0);
+
   const treeRef = useRef<HTMLDivElement>(null);
-  const [topText, setTopText] = useState('');
-  const [bottomText, setBottomText] = useState('');
-  if (treeRef.current) {
-    // createTemplate(treeRef.current);
-  }
+  const topTextarea = useRef<HTMLTextAreaElement>(null);
+  const bottomTextarea = useRef<HTMLTextAreaElement>(null);
+  const testObj = { firstname: 'Yeldar', lastname: 'Issa' };
+  setTimeout(() => {
+    if (treeRef.current)
+      console.log(generateMessage(generateTemplate(treeRef.current, depth), testObj));
+  });
 
   const handleAddVariable = (e: React.MouseEvent<HTMLButtonElement>) => {
     if (lastElement) {
@@ -66,31 +59,32 @@ const EditorWidget = ({
           );
         })}
       </div>
-      <Button onClick={() => setDepth((prev) => ++prev)}>[IF-THEN-ELSE]</Button>
+      <div>
+        <Button onClick={() => setDepth((prev) => ++prev)}>[IF-THEN-ELSE]</Button>
+      </div>
 
-      <div ref={treeRef} id="tree">
-        <Textarea
-          onFocus={handleFocus}
-          value={topText}
-          onChange={(e) => setTopText(e.target.value)}
-        />
+      <div ref={treeRef} className={styles.tree}>
+        <Textarea onFocus={handleFocus} ref={topTextarea} />
         <InputTree
           handleFocus={handleFocus}
           depth={depth}
-          height={height}
+          height={0}
           setDepth={setDepth}
           setText={() => {
-            setTopText(topText.concat(bottomText));
-            setBottomText('');
+            if (topTextarea.current && bottomTextarea.current) {
+              topTextarea.current.value = topTextarea.current.value.concat(
+                bottomTextarea.current.value
+              );
+              bottomTextarea.current.value = '';
+            }
           }}
         />
-        {depth > 0 ? (
-          <Textarea
-            onFocus={handleFocus}
-            value={bottomText}
-            onChange={(e) => setBottomText(e.target.value)}
-          />
-        ) : null}
+        {depth > 0 ? <Textarea onFocus={handleFocus} ref={bottomTextarea} /> : null}
+      </div>
+      <div className={styles.controls}>
+        <Button>Preview</Button>
+        <Button>Save</Button>
+        <Button>Close</Button>
       </div>
     </div>
   );
