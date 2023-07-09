@@ -1,10 +1,13 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import { Button } from '../ui/button/button';
 import { Textarea } from '../ui/textarea/textarea';
 import styles from './EditerWidget.module.css';
 import InputTree from './InputTree/InputTree';
-import { generateMessage, generateTemplate } from '../../utils';
+import { generateTemplate } from '../../utils';
+
+import { Modal, ModalClose, ModalContent, ModalTrigger } from '../ui/modal/modal';
+import Preview from './Preview/PreviewModal';
 
 const EditorWidget = ({
   arrVarNames,
@@ -14,17 +17,13 @@ const EditorWidget = ({
   template?: string;
   callbackSave: () => Promise<void>;
 }) => {
+  const [template, setTemplate] = useState<any>(null);
   const [lastElement, setLastElement] = useState<HTMLTextAreaElement | null>(null);
   const [depth, setDepth] = useState(2);
 
   const treeRef = useRef<HTMLDivElement>(null);
   const topTextarea = useRef<HTMLTextAreaElement>(null);
   const bottomTextarea = useRef<HTMLTextAreaElement>(null);
-  const testObj = { firstname: 'Yeldar', lastname: 'Issa' };
-  setTimeout(() => {
-    if (treeRef.current)
-      console.log(generateMessage(generateTemplate(treeRef.current, depth), testObj));
-  });
 
   const handleAddVariable = (e: React.MouseEvent<HTMLButtonElement>) => {
     if (lastElement) {
@@ -45,8 +44,12 @@ const EditorWidget = ({
     setLastElement(e.target);
   };
 
+  useEffect(() => {
+    setLastElement(topTextarea.current);
+  }, []);
+
   return (
-    <div className={styles.container}>
+    <>
       <h1 className={styles.title}>Message template editor</h1>
       <div className={styles.buttonGroup}>
         {arrVarNames.map((varName) => {
@@ -64,7 +67,7 @@ const EditorWidget = ({
       </div>
 
       <div ref={treeRef} className={styles.tree}>
-        <Textarea autoFocus onFocus={handleFocus} ref={topTextarea} />
+        <Textarea onFocus={handleFocus} ref={topTextarea} />
         <InputTree
           handleFocus={handleFocus}
           depth={depth}
@@ -82,11 +85,21 @@ const EditorWidget = ({
         {depth > 0 ? <Textarea onFocus={handleFocus} ref={bottomTextarea} /> : null}
       </div>
       <div className={styles.controls}>
-        <Button>Preview</Button>
         <Button>Save</Button>
-        <Button>Close</Button>
+        <ModalClose>Close</ModalClose>
       </div>
-    </div>
+      <Modal>
+        <ModalTrigger asChild>
+          <Button onClick={() => setTemplate(generateTemplate(treeRef.current!, depth))}>
+            Preview
+          </Button>
+        </ModalTrigger>
+        <ModalContent className={styles.previewContainer}>
+          <Preview template={template} arrVarNames={arrVarNames} />
+          <ModalClose>Close</ModalClose>
+        </ModalContent>
+      </Modal>
+    </>
   );
 };
 export default EditorWidget;

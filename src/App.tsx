@@ -1,4 +1,4 @@
-import EditorWidget from './components/EditorWidget/EditorWidget';
+import EditorWidgetModal from './components/EditorWidgetModal';
 
 function App() {
   let arrVarNames = localStorage.arrVarNames
@@ -8,7 +8,11 @@ function App() {
 
   return (
     <>
-      <EditorWidget arrVarNames={arrVarNames} template={template} callbackSave={async () => {}} />
+      <EditorWidgetModal
+        arrVarNames={arrVarNames}
+        template={template}
+        callbackSave={async () => {}}
+      />
     </>
   );
 }

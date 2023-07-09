@@ -1,9 +1,3 @@
-.container {
-  max-width: 1200px;
-  padding: 0 1rem;
-  margin: 0 auto;
-}
-
 .title {
   font-size: 2rem;
   text-align: center;
@@ -15,4 +9,8 @@
 }
 .controls button {
   margin: 1rem 2rem;
+}
+
+.previewContainer {
+  max-width: 900px;
 }
