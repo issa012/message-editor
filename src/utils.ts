@@ -60,9 +60,7 @@ function generateMessageHelper(node, values, result) {
 const replacer = (initialString: string, values) => {
   const keys = Object.keys(values);
 
-  let result = keys.reduce((acc, key) => {
+  return keys.reduce((acc, key) => {
     return acc.replaceAll(`{${key}}`, values[key]);
   }, initialString);
-
-  return result.replaceAll(/{(.*?)}/g, '');
 };
