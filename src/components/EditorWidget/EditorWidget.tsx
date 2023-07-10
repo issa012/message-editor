@@ -19,7 +19,7 @@ const EditorWidget = ({
 }) => {
   const [template, setTemplate] = useState<any>(null);
   const [lastElement, setLastElement] = useState<HTMLTextAreaElement | null>(null);
-  const [depth, setDepth] = useState(2);
+  const [depth, setDepth] = useState(0);
 
   const treeRef = useRef<HTMLDivElement>(null);
   const topTextarea = useRef<HTMLTextAreaElement>(null);

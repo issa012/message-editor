@@ -19,6 +19,7 @@ const Preview = ({ template, arrVarNames }: { template: any; arrVarNames: string
 
   if (!template) return null;
   let message = generateMessage(template, inputValues);
+  console.log(template);
 
   return (
     <div className={styles.container}>
@@ -30,7 +31,12 @@ const Preview = ({ template, arrVarNames }: { template: any; arrVarNames: string
       <div>
         <p>Variables</p>
         {arrVarNames.map((varName) => (
-          <Input label={varName} value={inputValues[varName]} onChange={handleChange(varName)} />
+          <Input
+            key={varName}
+            label={varName}
+            value={inputValues[varName]}
+            onChange={handleChange(varName)}
+          />
         ))}
       </div>
     </div>

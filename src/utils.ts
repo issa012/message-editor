@@ -30,22 +30,23 @@ export const generateTemplate: (node: HTMLDivElement, depth: number) => string[]
 
 export const generateMessage = (template, values) => {
   let result: string[] = [];
-  result.push(replacer(template.intro, values));
 
   if (!template.child) return replacer(template.intro, values);
-
+  result.push(template.intro);
   generateMessageHelper(template.child, values, result);
+  result.push(template.closing);
 
-  result.push(replacer(template.closing, values));
-  return result.join('');
+  console.log(result);
+  const resultString = replacer(result.join(''), values);
+  return resultString;
 };
 
 function generateMessageHelper(node, values, result) {
-  if (!values[node.condition]) {
+  if (!node.condition) {
     result.push(node.conditionFalse);
     return;
   } else {
-    result.push(node.conditionTrue.replaceAll(`{${node.condition}}`, values[node.condition]));
+    result.push(node.conditionTrue);
   }
 
   if (!node.child) {
