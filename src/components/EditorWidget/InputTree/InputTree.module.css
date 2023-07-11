@@ -1,19 +1,26 @@
 .container {
+  margin-left: 6rem;
+}
+
+.textareaContainer {
   display: flex;
   align-items: center;
+  position: relative;
+  margin-top: 8px;
 }
-
-.left {
+.chip {
+  position: absolute;
+  left: -8ch;
+  width: 6.5ch;
   display: flex;
-  align-items: center;
-  width: 16ch;
-  gap: 2rem;
+  justify-content: end;
+  gap: 5px;
 }
 
-.left > button {
-  padding: 2px;
+.chip > button {
+  padding: 1px;
 }
 
-.innerTree {
-  margin-left: 5rem;
+.additional {
+  margin-left: -6rem;
 }

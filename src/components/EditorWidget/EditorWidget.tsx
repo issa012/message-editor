@@ -1,13 +1,34 @@
-import { useEffect, useRef, useState } from 'react';
-
-import { Button } from '../ui/button/button';
+import { useState } from 'react';
 import { Textarea } from '../ui/textarea/textarea';
-import styles from './EditerWidget.module.css';
 import InputTree from './InputTree/InputTree';
-import { generateTemplate } from '../../utils';
+const templateObj = {
+  main: '1',
+  children: [
+    {
+      condition: '1',
+      condTrue: { value: '2', children: [] },
+      condFalse: {
+        value: '2',
+        children: [
+          {
+            condition: '3',
+            condTrue: { value: '3', children: [] },
+            condFalse: { value: '3', children: [] },
+            additional: { value: '3', children: [] },
+          },
+        ],
+      },
+      additional: { value: '2', children: [] },
+    },
 
-import { Modal, ModalClose, ModalContent, ModalTrigger } from '../ui/modal/modal';
-import Preview from './Preview/PreviewModal';
+    {
+      condition: '2',
+      condTrue: { value: '2', children: [] },
+      condFalse: { value: '2', children: [] },
+      additional: { value: '2', children: [] },
+    },
+  ],
+};
 
 const EditorWidget = ({
   arrVarNames,
@@ -17,89 +38,16 @@ const EditorWidget = ({
   template?: string;
   callbackSave: () => Promise<void>;
 }) => {
-  const [template, setTemplate] = useState<any>(null);
-  const [lastElement, setLastElement] = useState<HTMLTextAreaElement | null>(null);
-  const [depth, setDepth] = useState(0);
-
-  const treeRef = useRef<HTMLDivElement>(null);
-  const topTextarea = useRef<HTMLTextAreaElement>(null);
-  const bottomTextarea = useRef<HTMLTextAreaElement>(null);
-
-  const handleAddVariable = (e: React.MouseEvent<HTMLButtonElement>) => {
-    if (lastElement) {
-      const startPos = lastElement.selectionStart;
-      const prevValue = lastElement.value;
-      lastElement.value =
-        prevValue.slice(0, startPos) +
-        e.currentTarget.value +
-        prevValue.slice(startPos, lastElement.value.length);
-
-      lastElement.focus();
-      lastElement.selectionStart = startPos + e.currentTarget.value.length;
-      lastElement.selectionEnd = startPos + e.currentTarget.value.length;
-    }
-  };
-
-  const handleFocus = (e: React.FocusEvent<HTMLTextAreaElement>) => {
-    setLastElement(e.target);
-  };
-
-  useEffect(() => {
-    setLastElement(topTextarea.current);
-  }, []);
+  const [values, setValues] = useState(templateObj);
 
   return (
-    <>
-      <h1 className={styles.title}>Message template editor</h1>
-      <div className={styles.buttonGroup}>
-        {arrVarNames.map((varName) => {
-          return (
-            <Button
-              onClick={handleAddVariable}
-              key={varName}
-              value={`{${varName}}`}
-            >{`{${varName}}`}</Button>
-          );
-        })}
-      </div>
+    <div>
       <div>
-        <Button onClick={() => setDepth((prev) => ++prev)}>[IF-THEN-ELSE]</Button>
+        <h2>Message Template Editor</h2>
+        <Textarea value={values.main} />
+        <InputTree children={values.children} />
       </div>
-
-      <div ref={treeRef} className={styles.tree}>
-        <Textarea onFocus={handleFocus} ref={topTextarea} />
-        <InputTree
-          handleFocus={handleFocus}
-          depth={depth}
-          height={0}
-          setDepth={setDepth}
-          setText={() => {
-            if (topTextarea.current && bottomTextarea.current) {
-              topTextarea.current.value = topTextarea.current.value.concat(
-                bottomTextarea.current.value
-              );
-              bottomTextarea.current.value = '';
-            }
-          }}
-        />
-        {depth > 0 ? <Textarea onFocus={handleFocus} ref={bottomTextarea} /> : null}
-      </div>
-      <div className={styles.controls}>
-        <Button>Save</Button>
-        <ModalClose>Close</ModalClose>
-      </div>
-      <Modal>
-        <ModalTrigger asChild>
-          <Button onClick={() => setTemplate(generateTemplate(treeRef.current!, depth))}>
-            Preview
-          </Button>
-        </ModalTrigger>
-        <ModalContent className={styles.previewContainer}>
-          <Preview template={template} arrVarNames={arrVarNames} />
-          <ModalClose>Close</ModalClose>
-        </ModalContent>
-      </Modal>
-    </>
+    </div>
   );
 };
 export default EditorWidget;

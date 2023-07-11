@@ -4,74 +4,48 @@ import { Textarea } from '../../ui/textarea/textarea';
 import styles from './InputTree.module.css';
 
 type InputTreeProps = {
-  depth: number;
-  className?: string;
-  setDepth: React.Dispatch<React.SetStateAction<number>>;
-  handleFocus: (e: React.FocusEvent<HTMLTextAreaElement>) => void;
-  setText: () => void;
-  height: number;
+  children: any;
 };
 
-const InputTree = ({
-  depth,
-  className = '',
-  setDepth,
-  handleFocus,
-  height,
-  setText,
-}: InputTreeProps) => {
-  const topTextarea = useRef<HTMLTextAreaElement>(null);
-  const bottomTextarea = useRef<HTMLTextAreaElement>(null);
-
-  const onDelete = () => {
-    setText();
-    setDepth(height);
-  };
-
-  if (depth === 0) return null;
+const InputTree = ({ children }: InputTreeProps) => {
+  if (!children) return null;
   return (
-    <div className={`${className} ${styles.wrapper}`}>
-      <div className={styles.container}>
-        <div className={styles.left}>
-          <span>IF</span>
-          <Button onClick={onDelete}>Delete</Button>
-        </div>
-        <Textarea onFocus={handleFocus} />
-      </div>
-      <div className={styles.container}>
-        <div className={styles.left}>
-          <span>THEN</span>
-        </div>
-        <Textarea ref={topTextarea} onFocus={handleFocus} />
-      </div>
-      <InputTree
-        handleFocus={handleFocus}
-        className={styles.innerTree}
-        height={height + 1}
-        depth={depth - 1}
-        setDepth={setDepth}
-        setText={() => {
-          if (topTextarea.current && bottomTextarea.current) {
-            topTextarea.current.value = topTextarea.current.value.concat(
-              bottomTextarea.current.value
-            );
-            bottomTextarea.current.value = '';
-          }
-        }}
-      ></InputTree>
-      {depth - 1 > 0 ? (
+    <>
+      {children.map((node: any) => (
         <div className={styles.container}>
-          <div className={styles.left}></div>
-          <Textarea ref={bottomTextarea} onFocus={handleFocus} />
+          <div>
+            <div className={styles.textareaContainer}>
+              <span className={styles.chip}>
+                <Button>Delete</Button>
+                IF
+              </span>
+              <Textarea value={node.condition} />
+            </div>
+          </div>
+          <div>
+            <div className={styles.textareaContainer}>
+              <span className={styles.chip}>THEN</span>
+              <Textarea value={node.condTrue.value} />
+            </div>
+            <InputTree children={node.condTrue.children} />
+          </div>
+          <div>
+            <div className={styles.textareaContainer}>
+              <span className={styles.chip}>ELSE</span>
+              <Textarea value={node.condFalse.value} />
+            </div>
+            <InputTree children={node.condFalse.children} />
+          </div>
+          <div className={styles.additional}>
+            <div className={styles.textareaContainer}>
+              <span className={styles.chip}></span>
+              <Textarea value={node.additional.value} />
+            </div>
+            <InputTree children={node.additional.children} />
+          </div>
         </div>
-      ) : null}
-      <div className={styles.container}>
-        <div className={styles.left}>
-          <span>ELSE</span>
-        </div>
-        <Textarea onFocus={handleFocus} />
-      </div>
-    </div>
+      ))}
+    </>
   );
 };
 export default InputTree;
