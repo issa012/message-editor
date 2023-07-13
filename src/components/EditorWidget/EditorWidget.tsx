@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Textarea } from '../ui/textarea/textarea';
 import InputTree from './InputTree/InputTree';
+import { Button } from '../ui/button/button';
 
 export type Template = {
   condition: string;
@@ -52,7 +53,10 @@ const EditorWidget = ({
   callbackSave: () => Promise<void>;
 }) => {
   const [values, setValues] = useState<MyTemplate>(templateObj);
-  const [lastElement, setLastElement] = useState('children');
+
+  const [lastElement, setLastElement] = useState<{ path: string; target?: HTMLTextAreaElement }>({
+    path: 'children',
+  });
 
   function handleValuesChange(path: string, e: React.ChangeEvent<HTMLTextAreaElement>) {
     const pathId = path.split('.');
@@ -81,11 +85,29 @@ const EditorWidget = ({
   }
 
   function handleFocus(path: string, e: React.ChangeEvent<HTMLTextAreaElement>) {
-    if (e.target.name) {
-      setLastElement(path.concat('.', e.target.name));
-    } else {
-      setLastElement(path);
+    setLastElement({ path: path, target: e.target });
+  }
+
+  function handleAddVariableClick(path: string, target: HTMLTextAreaElement, varName: string) {
+    const pathId = path.split('.');
+    const copy = JSON.parse(JSON.stringify(values));
+
+    let curr = copy;
+    for (let i = 0; i < pathId.length; i++) {
+      if (pathId[i]) {
+        curr = curr[pathId[i]];
+      }
     }
+    const newVal = target.value
+      .slice(0, target.selectionStart)
+      .concat('{', varName, '}', target.value.slice(target.selectionStart));
+
+    if (target.name === 'condition' || target.name === 'main') {
+      curr[target.name] = newVal;
+    } else {
+      curr[target.name].value = newVal;
+    }
+    setValues(copy);
   }
 
   function handleAddElement(path: string) {
@@ -98,11 +120,20 @@ const EditorWidget = ({
     <div>
       <div>
         <h2>Message Template Editor</h2>
-        <div></div>
+        <div>
+          {arrVarNames.map((varName) => (
+            <Button
+              key={varName}
+              onClick={() => handleAddVariableClick(lastElement.path, lastElement.target!, varName)}
+            >{`{${varName}}`}</Button>
+          ))}
+        </div>
+
         <Textarea
           value={values.main}
+          name="main"
           onChange={(e) => setValues({ ...values, main: e.target.value })}
-          onFocus={(e) => handleFocus('children', e)}
+          onFocus={(e) => handleFocus('', e)}
         />
         <InputTree
           children={values.children}
