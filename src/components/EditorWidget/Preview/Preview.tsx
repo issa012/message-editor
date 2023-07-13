@@ -1,7 +1,7 @@
 import styles from './Preview.module.css';
 
 import { Textarea } from '../../ui/textarea/textarea';
-import { generateMessage } from '../../../utils';
+import { generateMessage } from '../../../generateMessage';
 import { Input } from '../../ui/input/input';
 import { useState } from 'react';
 
