@@ -13,7 +13,7 @@
   left: -8ch;
   width: 6.5ch;
   display: flex;
-  justify-content: end;
+  justify-content: flex-end;
   gap: 5px;
 }
 

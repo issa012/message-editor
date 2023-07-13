@@ -5,3 +5,6 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+.preview {
+  max-width: 900px;
+}

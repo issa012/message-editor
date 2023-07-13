@@ -18,7 +18,7 @@ const PreviewModal = ({
       <ModalTrigger asChild>
         <Button>Open Preview</Button>
       </ModalTrigger>
-      <ModalContent>
+      <ModalContent className="preview">
         <Preview arrVarNames={arrVarNames} template={template} />
       </ModalContent>
     </Modal>
