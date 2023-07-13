@@ -1,4 +1,4 @@
-import styles from './PreviewModal.module.css';
+import styles from './Preview.module.css';
 
 import { Textarea } from '../../ui/textarea/textarea';
 import { generateMessage } from '../../../utils';
@@ -17,9 +17,7 @@ const Preview = ({ template, arrVarNames }: { template: any; arrVarNames: string
     setInputValues({ ...inputValues, [varName]: e.target.value });
   };
 
-  if (!template) return null;
   let message = generateMessage(template, inputValues);
-  console.log(template);
 
   return (
     <div className={styles.container}>

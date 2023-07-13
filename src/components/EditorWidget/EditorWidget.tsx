@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Textarea } from '../ui/textarea/textarea';
 import InputTree from './InputTree/InputTree';
 import { Button } from '../ui/button/button';
+import PreviewModal from '../PreviewModal';
 
 export type Template = {
   condition: string;
@@ -57,8 +58,10 @@ const EditorWidget = ({
     for (let i = 0; i < pathId.length - 1; i++) {
       curr = curr[pathId[i]];
     }
+
     curr.splice(pathId.at(-1), 1);
     setValues(copy);
+    setLastElement({ path: '', target: mainRef.current });
   }
 
   function handleFocus(path: string, e: React.ChangeEvent<HTMLTextAreaElement>) {
@@ -156,6 +159,7 @@ const EditorWidget = ({
           handleFocus={handleFocus}
         />
       </div>
+      <PreviewModal template={values} arrVarNames={arrVarNames} />
     </div>
   );
 };
