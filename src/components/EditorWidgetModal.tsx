@@ -1,4 +1,4 @@
-import EditorWidget from './EditorWidget/EditorWidget';
+import EditorWidget, { MyTemplate } from './EditorWidget/EditorWidget';
 
 import { Button } from './ui/button/button';
 
@@ -7,9 +7,10 @@ import { Modal, ModalContent, ModalTrigger } from './ui/modal/modal';
 const EditorWidgetModal = ({
   arrVarNames,
   callbackSave,
+  template,
 }: {
   arrVarNames: string[];
-  template?: string;
+  template: MyTemplate;
   callbackSave: () => Promise<void>;
 }) => {
   return (
@@ -18,7 +19,7 @@ const EditorWidgetModal = ({
         <Button>Message Template</Button>
       </ModalTrigger>
       <ModalContent>
-        <EditorWidget arrVarNames={arrVarNames} callbackSave={callbackSave} />
+        <EditorWidget arrVarNames={arrVarNames} callbackSave={callbackSave} template={template} />
       </ModalContent>
     </Modal>
   );

@@ -23,12 +23,11 @@ const InputTree = ({
   handleDelete,
   handleFocus,
 }: InputTreeProps) => {
-  if (!children.length) return null;
   path = path.concat('children');
   return (
     <>
       {children.map((node: Template, id: number) => (
-        <div className={styles.container}>
+        <div key={path.concat(String(id))} className={styles.container}>
           <div className={styles.textareaContainer}>
             <span className={styles.chip}>
               <Button onClick={(e) => handleDelete(path.concat('.', String(id)), e)}>Delete</Button>

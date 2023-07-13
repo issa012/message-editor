@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Textarea } from '../ui/textarea/textarea';
 import InputTree from './InputTree/InputTree';
 import { Button } from '../ui/button/button';
@@ -15,47 +15,24 @@ export type MyTemplate = {
   children: Template[];
 };
 
-const templateObj: MyTemplate = {
-  main: '1',
-  children: [
-    {
-      condition: '2',
-      condTrue: { value: '2', children: [] },
-      condFalse: {
-        value: '2',
-        children: [
-          {
-            condition: '3',
-            condTrue: { value: '3', children: [] },
-            condFalse: { value: '3', children: [] },
-            additional: { value: '3', children: [] },
-          },
-        ],
-      },
-      additional: { value: '2', children: [] },
-    },
-
-    {
-      condition: '2',
-      condTrue: { value: '2', children: [] },
-      condFalse: { value: '2', children: [] },
-      additional: { value: '2', children: [] },
-    },
-  ],
-};
-
 const EditorWidget = ({
   arrVarNames,
   callbackSave,
+  template,
 }: {
   arrVarNames: string[];
-  template?: string;
+  template: MyTemplate;
   callbackSave: () => Promise<void>;
 }) => {
-  const [values, setValues] = useState<MyTemplate>(templateObj);
+  const [values, setValues] = useState<MyTemplate>(template);
+  const mainRef = useRef<HTMLTextAreaElement>(null);
 
-  const [lastElement, setLastElement] = useState<{ path: string; target?: HTMLTextAreaElement }>({
+  const [lastElement, setLastElement] = useState<{
+    path: string;
+    target: HTMLTextAreaElement | null;
+  }>({
     path: 'children',
+    target: mainRef.current,
   });
 
   function handleValuesChange(path: string, e: React.ChangeEvent<HTMLTextAreaElement>) {
@@ -107,14 +84,43 @@ const EditorWidget = ({
     } else {
       curr[target.name].value = newVal;
     }
+    target.focus();
     setValues(copy);
   }
 
-  function handleAddElement(path: string) {
+  function handleAddElement(path: string, target: HTMLTextAreaElement) {
+    if (target.name === 'condition') return;
+
+    const pathId = path.split('.');
+    // console.log(path, target);
     const copy = JSON.parse(JSON.stringify(values));
+    let curr = copy;
+    for (let i = 0; i < pathId.length; i++) {
+      if (pathId[i]) {
+        curr = curr[pathId[i]];
+      }
+    }
 
+    const newObj = {
+      condition: 'new',
+      condTrue: { value: '', children: [] },
+      condFalse: { value: '', children: [] },
+      additional: { value: target.value.slice(target.selectionStart), children: [] },
+    };
+    if (target.name === 'main') {
+      curr.main = curr.main.slice(0, target.selectionStart);
+      curr.children.unshift(newObj);
+    } else {
+      curr[target.name].value = curr[target.name].value.slice(0, target.selectionStart);
+      curr[target.name].children.unshift(newObj);
+    }
+    target.focus();
     setValues(copy);
   }
+
+  useEffect(() => {
+    setLastElement({ path: '', target: mainRef.current });
+  }, []);
 
   return (
     <div>
@@ -128,10 +134,15 @@ const EditorWidget = ({
             >{`{${varName}}`}</Button>
           ))}
         </div>
-
+        <div>
+          <Button onClick={() => handleAddElement(lastElement.path, lastElement.target!)}>
+            IF | THEN | ELSE
+          </Button>
+        </div>
         <Textarea
           value={values.main}
           name="main"
+          ref={mainRef}
           onChange={(e) => setValues({ ...values, main: e.target.value })}
           onFocus={(e) => handleFocus('', e)}
         />
