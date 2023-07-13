@@ -12,7 +12,7 @@ export type Template = {
 };
 
 export type MyTemplate = {
-  main: string;
+  value: string;
   children: Template[];
 };
 
@@ -22,10 +22,10 @@ const EditorWidget = ({
   template,
 }: {
   arrVarNames: string[];
-  template: MyTemplate;
+  template?: MyTemplate;
   callbackSave: () => Promise<void>;
 }) => {
-  const [values, setValues] = useState<MyTemplate>(template);
+  const [values, setValues] = useState<MyTemplate>(template || { value: '', children: [] });
   const mainRef = useRef<HTMLTextAreaElement>(null);
 
   const [lastElement, setLastElement] = useState<{
@@ -53,13 +53,20 @@ const EditorWidget = ({
 
   function handleDelete(path: string, e: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
     const pathId = path.split('.');
+
     const copy = JSON.parse(JSON.stringify(values));
     let curr = copy;
-    for (let i = 0; i < pathId.length - 1; i++) {
+    for (let i = 0; i < pathId.length - 2; i++) {
       curr = curr[pathId[i]];
     }
 
-    curr.splice(pathId.at(-1), 1);
+    const referenceToParent = curr;
+
+    let removed = curr.children.splice(pathId.at(-1), 1);
+
+    referenceToParent.value = referenceToParent.value.concat(
+      removed.at(pathId.at(-1)).additional.value
+    );
     setValues(copy);
     setLastElement({ path: '', target: mainRef.current });
   }
@@ -83,7 +90,7 @@ const EditorWidget = ({
       .concat('{', varName, '}', target.value.slice(target.selectionStart));
 
     if (target.name === 'condition' || target.name === 'main') {
-      curr[target.name] = newVal;
+      curr.value = newVal;
     } else {
       curr[target.name].value = newVal;
     }
@@ -105,13 +112,13 @@ const EditorWidget = ({
     }
 
     const newObj = {
-      condition: 'new',
+      condition: '',
       condTrue: { value: '', children: [] },
       condFalse: { value: '', children: [] },
       additional: { value: target.value.slice(target.selectionStart), children: [] },
     };
     if (target.name === 'main') {
-      curr.main = curr.main.slice(0, target.selectionStart);
+      curr.value = curr.value.slice(0, target.selectionStart);
       curr.children.unshift(newObj);
     } else {
       curr[target.name].value = curr[target.name].value.slice(0, target.selectionStart);
@@ -143,10 +150,10 @@ const EditorWidget = ({
           </Button>
         </div>
         <Textarea
-          value={values.main}
+          value={values.value}
           name="main"
           ref={mainRef}
-          onChange={(e) => setValues({ ...values, main: e.target.value })}
+          onChange={(e) => setValues({ ...values, value: e.target.value })}
           onFocus={(e) => handleFocus('', e)}
         />
         <InputTree

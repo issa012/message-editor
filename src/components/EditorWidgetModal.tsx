@@ -10,7 +10,7 @@ const EditorWidgetModal = ({
   template,
 }: {
   arrVarNames: string[];
-  template: MyTemplate;
+  template?: MyTemplate;
   callbackSave: () => Promise<void>;
 }) => {
   return (

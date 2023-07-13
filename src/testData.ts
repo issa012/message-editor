@@ -5,7 +5,7 @@ type Dataset = { template: MyTemplate; values: Record<string, string>; expected:
 export const dataset: Dataset[] = [
   {
     template: {
-      main: 'Hello {firstname} {lastname}!\n',
+      value: 'Hello {firstname} {lastname}!\n',
       children: [
         {
           condition: '{company}',
@@ -60,7 +60,7 @@ export const dataset: Dataset[] = [
   },
   {
     template: {
-      main: 'Hello {firstname} {lastname}!\n',
+      value: 'Hello {firstname} {lastname}!\n',
       children: [
         {
           condition: '{company}',
@@ -115,7 +115,7 @@ export const dataset: Dataset[] = [
   },
   {
     template: {
-      main: 'Hello {firstname} {lastname}!\n',
+      value: 'Hello {firstname} {lastname}!\n',
       children: [
         {
           condition: '{company}',
@@ -170,7 +170,7 @@ export const dataset: Dataset[] = [
   },
   {
     template: {
-      main: 'Hello {firstname} {lastname}!\n',
+      value: 'Hello {firstname} {lastname}!\n',
       children: [
         {
           condition: '{company}',

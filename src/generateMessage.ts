@@ -3,8 +3,7 @@ import { MyTemplate, Template } from './components/EditorWidget/EditorWidget';
 export const generateMessage = (template: MyTemplate, values: Record<string, string>) => {
   let result: string[] = [];
 
-  if (!template.children) return replacer(template.main, values);
-  result.push(template.main);
+  result.push(template.value);
   generateMessageHelper(template.children, values, result);
 
   const resultString = replacer(result.join(''), values);
