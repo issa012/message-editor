@@ -3,7 +3,7 @@ import Preview from './EditorWidget/Preview/Preview';
 
 import { Button } from './ui/button/button';
 
-import { Modal, ModalContent, ModalTrigger } from './ui/modal/modal';
+import { Modal, ModalClose, ModalContent, ModalTrigger } from './ui/modal/modal';
 
 const PreviewModal = ({
   arrVarNames,
@@ -16,10 +16,13 @@ const PreviewModal = ({
   return (
     <Modal>
       <ModalTrigger asChild>
-        <Button>Open Preview</Button>
+        <div className="controls">
+          <Button>Open Preview</Button>
+        </div>
       </ModalTrigger>
       <ModalContent className="preview">
         <Preview arrVarNames={arrVarNames} template={template} />
+        <ModalClose>Close</ModalClose>
       </ModalContent>
     </Modal>
   );

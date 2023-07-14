@@ -5,7 +5,7 @@ import styles from './textarea.module.css';
 
 const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaAutosizeProps>(
   ({ ...props }, ref) => {
-    return <TextareaAutosize className={`${styles.textarea}`} ref={ref} {...props} minRows={2} />;
+    return <TextareaAutosize className={`${styles.textarea}`} ref={ref} minRows={2} {...props} />;
   }
 );
 Textarea.displayName = 'Textarea';

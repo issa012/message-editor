@@ -3,6 +3,8 @@ import { Textarea } from '../ui/textarea/textarea';
 import InputTree from './InputTree/InputTree';
 import { Button } from '../ui/button/button';
 import PreviewModal from '../PreviewModal';
+import styles from './EditerWidget.module.css';
+import { ModalClose } from '../ui/modal/modal';
 
 export type Template = {
   condition: string;
@@ -68,7 +70,6 @@ const EditorWidget = ({
       removed.at(pathId.at(-1)).additional.value
     );
     setValues(copy);
-    setLastElement({ path: '', target: mainRef.current });
   }
 
   function handleFocus(path: string, e: React.ChangeEvent<HTMLTextAreaElement>) {
@@ -82,15 +83,17 @@ const EditorWidget = ({
     let curr = copy;
     for (let i = 0; i < pathId.length; i++) {
       if (pathId[i]) {
+        if (!curr[pathId[i]]) return;
         curr = curr[pathId[i]];
       }
     }
+
     const newVal = target.value
       .slice(0, target.selectionStart)
       .concat('{', varName, '}', target.value.slice(target.selectionStart));
 
-    if (target.name === 'condition' || target.name === 'main') {
-      curr.value = newVal;
+    if (target.name === 'value' || target.name === 'condition') {
+      curr[target.name] = newVal;
     } else {
       curr[target.name].value = newVal;
     }
@@ -102,11 +105,12 @@ const EditorWidget = ({
     if (target.name === 'condition') return;
 
     const pathId = path.split('.');
-    // console.log(path, target);
+
     const copy = JSON.parse(JSON.stringify(values));
     let curr = copy;
     for (let i = 0; i < pathId.length; i++) {
       if (pathId[i]) {
+        if (!curr[pathId[i]]) return;
         curr = curr[pathId[i]];
       }
     }
@@ -117,7 +121,7 @@ const EditorWidget = ({
       condFalse: { value: '', children: [] },
       additional: { value: target.value.slice(target.selectionStart), children: [] },
     };
-    if (target.name === 'main') {
+    if (target.name === 'value') {
       curr.value = curr.value.slice(0, target.selectionStart);
       curr.children.unshift(newObj);
     } else {
@@ -135,7 +139,7 @@ const EditorWidget = ({
   return (
     <div>
       <div>
-        <h2>Message Template Editor</h2>
+        <h1 className={styles.title}>Message Template Editor</h1>
         <div>
           {arrVarNames.map((varName) => (
             <Button
@@ -150,8 +154,9 @@ const EditorWidget = ({
           </Button>
         </div>
         <Textarea
+          minRows={5}
           value={values.value}
-          name="main"
+          name="value"
           ref={mainRef}
           onChange={(e) => setValues({ ...values, value: e.target.value })}
           onFocus={(e) => handleFocus('', e)}
@@ -165,6 +170,10 @@ const EditorWidget = ({
           handleDelete={handleDelete}
           handleFocus={handleFocus}
         />
+      </div>
+      <div className={styles.controls}>
+        <Button onClick={() => callbackSave()}>Save</Button>
+        <ModalClose>Close</ModalClose>
       </div>
       <PreviewModal template={values} arrVarNames={arrVarNames} />
     </div>
