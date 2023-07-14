@@ -6,11 +6,9 @@
 
 .controls {
   text-align: center;
+  margin: 8px 0;
 }
-.controls button {
-  margin: 1rem 2rem;
-}
-
-.previewContainer {
-  max-width: 900px;
+.controls > button {
+  margin: 0 10px;
+  padding: 0.5em 1em;
 }

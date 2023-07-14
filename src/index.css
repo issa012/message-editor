@@ -6,5 +6,13 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 .preview {
-  max-width: 900px;
+  max-width: 1000px;
+}
+
+.controls {
+  text-align: center;
+}
+
+.controls > button {
+  padding: 0.5em 1em;
 }
