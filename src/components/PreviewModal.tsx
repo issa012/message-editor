@@ -1,9 +1,9 @@
+import { useState } from 'react';
 import { MyTemplate } from './EditorWidget/EditorWidget';
 import Preview from './EditorWidget/Preview/Preview';
 
 import { Button } from './ui/button/button';
-
-import { Modal, ModalClose, ModalContent, ModalTrigger } from './ui/modal/modal';
+import { Modal } from './ui/modal/modal';
 
 const PreviewModal = ({
   arrVarNames,
@@ -13,18 +13,16 @@ const PreviewModal = ({
   arrVarNames: string[];
   template: MyTemplate;
 }) => {
+  const [open, setOpen] = useState(false);
   return (
-    <Modal>
-      <ModalTrigger asChild>
-        <div className="controls">
-          <Button>Open Preview</Button>
-        </div>
-      </ModalTrigger>
-      <ModalContent className="preview">
+    <div>
+      <Button onClick={() => setOpen(true)}>Open Preview</Button>
+
+      <Modal open={open} setOpen={setOpen}>
         <Preview arrVarNames={arrVarNames} template={template} />
-        <ModalClose>Close</ModalClose>
-      </ModalContent>
-    </Modal>
+        <Button onClick={() => setOpen(false)}>Close</Button>
+      </Modal>
+    </div>
   );
 };
 export default PreviewModal;

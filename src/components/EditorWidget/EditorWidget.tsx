@@ -4,7 +4,6 @@ import InputTree from './InputTree/InputTree';
 import { Button } from '../ui/button/button';
 import PreviewModal from '../PreviewModal';
 import styles from './EditerWidget.module.css';
-import { ModalClose } from '../ui/modal/modal';
 
 export type Template = {
   condition: string;
@@ -22,10 +21,12 @@ const EditorWidget = ({
   arrVarNames,
   callbackSave,
   template,
+  onClose,
 }: {
   arrVarNames: string[];
   template?: MyTemplate;
   callbackSave: () => Promise<void>;
+  onClose: () => void;
 }) => {
   const [values, setValues] = useState<MyTemplate>(template || { value: '', children: [] });
   const mainRef = useRef<HTMLTextAreaElement>(null);
@@ -66,9 +67,8 @@ const EditorWidget = ({
 
     let removed = curr.children.splice(pathId.at(-1), 1);
 
-    referenceToParent.value = referenceToParent.value.concat(
-      removed.at(pathId.at(-1)).additional.value
-    );
+    referenceToParent.value = referenceToParent.value.concat(removed[0].additional.value);
+
     setValues(copy);
   }
 
@@ -137,7 +137,7 @@ const EditorWidget = ({
   }, []);
 
   return (
-    <div>
+    <div className={styles.container}>
       <div>
         <h1 className={styles.title}>Message Template Editor</h1>
         <div>
@@ -173,7 +173,7 @@ const EditorWidget = ({
       </div>
       <div className={styles.controls}>
         <Button onClick={() => callbackSave()}>Save</Button>
-        <ModalClose>Close</ModalClose>
+        <Button onClick={onClose}>Close</Button>
       </div>
       <PreviewModal template={values} arrVarNames={arrVarNames} />
     </div>

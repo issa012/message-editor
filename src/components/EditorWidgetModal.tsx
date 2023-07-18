@@ -1,8 +1,8 @@
+import { useState } from 'react';
 import EditorWidget, { MyTemplate } from './EditorWidget/EditorWidget';
 
 import { Button } from './ui/button/button';
-
-import { Modal, ModalContent, ModalTrigger } from './ui/modal/modal';
+import { Modal } from './ui/modal/modal';
 
 const EditorWidgetModal = ({
   arrVarNames,
@@ -13,15 +13,20 @@ const EditorWidgetModal = ({
   template?: MyTemplate;
   callbackSave: () => Promise<void>;
 }) => {
+  const [open, setOpen] = useState(false);
   return (
-    <Modal>
-      <ModalTrigger asChild>
-        <Button>Message Template</Button>
-      </ModalTrigger>
-      <ModalContent>
-        <EditorWidget arrVarNames={arrVarNames} callbackSave={callbackSave} template={template} />
-      </ModalContent>
-    </Modal>
+    <div>
+      <Button onClick={() => setOpen(true)}>Message Template</Button>
+
+      <Modal open={open} setOpen={setOpen}>
+        <EditorWidget
+          arrVarNames={arrVarNames}
+          callbackSave={callbackSave}
+          template={template}
+          onClose={() => setOpen(false)}
+        />
+      </Modal>
+    </div>
   );
 };
 export default EditorWidgetModal;

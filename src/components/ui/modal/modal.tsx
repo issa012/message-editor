@@ -1,23 +1,16 @@
-import { Root, Trigger, Portal, Overlay, Content, Close, Title } from '@radix-ui/react-dialog';
 import styles from './modal.module.css';
-
-export const Modal = ({ children }: { children: React.ReactNode }) => <Root>{children}</Root>;
-
-export const ModalContent = ({
-  children,
-  className,
-}: {
+interface ModalProps {
+  open: boolean;
+  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
   children: React.ReactNode;
-  className?: string;
-}) => {
+}
+
+export const Modal = ({ open, setOpen, children }: ModalProps) => {
   return (
-    <Portal>
-      <Overlay className={styles.overlay} />
-      <Content className={styles.content + ' ' + className}>{children}</Content>
-    </Portal>
+    <div className={`${styles.modal} ${open ? styles.show : ''}`} onClick={() => setOpen(false)}>
+      <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
+        {children}
+      </div>
+    </div>
   );
 };
-
-export const ModalClose = Close;
-export const ModalTrigger = Trigger;
-export const ModalTitle = Title;
