@@ -41,11 +41,17 @@ const EditorWidget = ({
 
   function handleValuesChange(path: string, e: React.ChangeEvent<HTMLTextAreaElement>) {
     const pathId = path.split('.');
+
+    // create copy of the values object.
     const copy = JSON.parse(JSON.stringify(values));
     let curr = copy;
+
+    // Get the reference to the current object using pathId. pathId contains the path to the current obj.
+    // Other functions operate similarly
     for (let i = 0; i < pathId.length; i++) {
       curr = curr[pathId[i]];
     }
+    // change the value of the current object
     if (e.target.name === 'condition') {
       curr.condition = e.target.value;
     } else {
@@ -66,7 +72,6 @@ const EditorWidget = ({
     const referenceToParent = curr;
 
     let removed = curr.children.splice(pathId.at(-1), 1);
-
     referenceToParent.value = referenceToParent.value.concat(removed[0].additional.value);
 
     setValues(copy);
@@ -121,6 +126,7 @@ const EditorWidget = ({
       condFalse: { value: '', children: [] },
       additional: { value: target.value.slice(target.selectionStart), children: [] },
     };
+
     if (target.name === 'value') {
       curr.value = curr.value.slice(0, target.selectionStart);
       curr.children.unshift(newObj);
@@ -131,7 +137,7 @@ const EditorWidget = ({
     target.focus();
     setValues(copy);
   }
-
+  // Set the first textarea as the last element after render.
   useEffect(() => {
     setLastElement({ path: '', target: mainRef.current });
   }, []);
