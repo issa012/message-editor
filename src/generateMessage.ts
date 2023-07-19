@@ -28,9 +28,10 @@ function generateMessageHelper(
 }
 
 const replacer = (initialString: string, values: Record<string, string>) => {
-  const keys = Object.keys(values);
-
-  return keys.reduce((acc, key) => {
-    return acc.replaceAll(`{${key}}`, values[key]);
-  }, initialString);
+  const regex = /\{([^}]+)\}/g;
+  let replacedString = initialString.replaceAll(regex, (match, group) => {
+    // console.log(match, group);
+    return values.hasOwnProperty(group) ? values[group] : match;
+  });
+  return replacedString;
 };

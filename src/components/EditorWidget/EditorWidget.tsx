@@ -62,16 +62,19 @@ const EditorWidget = ({
 
   function handleDelete(path: string, e: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
     const pathId = path.split('.');
-
     const copy = JSON.parse(JSON.stringify(values));
     let curr = copy;
     for (let i = 0; i < pathId.length - 2; i++) {
       curr = curr[pathId[i]];
     }
-
-    const referenceToParent = curr;
-
+    let referenceToParent = curr;
+    console.log(curr);
     let removed = curr.children.splice(pathId.at(-1), 1);
+    console.log(removed);
+    if (+pathId[pathId.length - 1] > 0) {
+      console.log(referenceToParent, pathId);
+      referenceToParent = referenceToParent.children[+pathId[pathId.length - 1] - 1].additional;
+    }
     referenceToParent.value = referenceToParent.value.concat(removed[0].additional.value);
 
     setValues(copy);
@@ -112,13 +115,6 @@ const EditorWidget = ({
     const pathId = path.split('.');
 
     const copy = JSON.parse(JSON.stringify(values));
-    let curr = copy;
-    for (let i = 0; i < pathId.length; i++) {
-      if (pathId[i]) {
-        if (!curr[pathId[i]]) return;
-        curr = curr[pathId[i]];
-      }
-    }
 
     const newObj = {
       condition: '',
@@ -128,12 +124,32 @@ const EditorWidget = ({
     };
 
     if (target.name === 'value') {
-      curr.value = curr.value.slice(0, target.selectionStart);
-      curr.children.unshift(newObj);
-    } else {
-      curr[target.name].value = curr[target.name].value.slice(0, target.selectionStart);
-      curr[target.name].children.unshift(newObj);
+      copy.value = copy.value.slice(0, target.selectionStart);
+      copy.children.unshift(newObj);
+      setValues(copy);
+      return;
     }
+
+    let curr = copy;
+    for (let i = 0; i < pathId.length - 1; i++) {
+      curr = curr[pathId[i]];
+    }
+    if (target.name === 'additional') {
+      let index = pathId[pathId.length - 1];
+
+      curr.splice(index + 1, 0, newObj);
+      curr[index][target.name].value = curr[index][target.name].value.slice(
+        0,
+        target.selectionStart
+      );
+      setValues(copy);
+      return;
+    }
+
+    curr = curr[pathId[pathId.length - 1]];
+    curr[target.name].value = curr[target.name].value.slice(0, target.selectionStart);
+    curr[target.name].children.unshift(newObj);
+
     target.focus();
     setValues(copy);
   }
@@ -142,6 +158,7 @@ const EditorWidget = ({
     setLastElement({ path: '', target: mainRef.current });
   }, []);
 
+  // console.log(values);
   return (
     <div className={styles.container}>
       <div>
