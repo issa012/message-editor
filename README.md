@@ -1,3 +1,6 @@
+# Тестовое задание message editor and preview
+Необходимо разработать редактор шаблонов сообщений и виджет предпросмотра сообщений.
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
